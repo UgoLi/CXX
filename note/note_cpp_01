@@ -1,0 +1,243 @@
+蒋贵良
+jianggl@tedu.cn
+qq:280089088
+
+
+一、c++概述
+1.c++历史背
+1) c++的江湖地位
+java c c++ c# python
+
+2）C++之父：Bjarne Srtousstrup（1950--）
+1979,Cpre，为c语言增加的机制
+1983,Bjarne   c with class
+1985,ront1.0 《The C++ programming Language》
+
+3)C++发展过程
+1987,GUN C++
+1990,Borland C++ BC编译器
+1992,VC
+1998,ISO C++98
+2003,对C++98修订，C++03
+2011,ISO C++11/C++0x
+2014,ISO C++标准扩展，C++14
+
+2.应用领域
+1）游戏
+2）科学计算
+3）网络通信（ACE)
+4）操作系统和设备驱动
+5）其他...编译解释器
+
+3.C和C++
+1）都是编译4语言
+2）都是强类型语言，但C++更强
+3）C++兼容C语言，但是去除了C中不好的特性
+4) C++增加了很多好的特性，适合大型软件的开发
+
+二 第一个C++程序
+1 编译方式
+1）gcc XX.cpp -lstdc++
+2）g++ XX.cpp 
+
+2 文件扩展名
+1）xx.cpp
+2）xx.cc
+3）xx.cxx
+4）xx.C
+
+3 头文件
+//包含标准C++中所有和I/O有关的类型函数对象
+#include<iostream>
+
+//在C++中依然可以使用C库文件的函数，但需要写上对应的头文件
+#include <stdio.h>  ==>#include<cstdio>
+#include <stdlib.h> ==>#include<cstdlib>
+...
+unix C库保持
+
+4 标准输入和输入
+1）用一个cin的对象表示标准输入//类似scanf
+eg：
+    int a;//标准输入一个整形变量放入变量a中
+    scanf("%d",&a);
+    cin>>a;//">>"称为提取运算符
+
+2）用cout对象表示标准输出//类似printf
+
+三 名字空间
+1 名字空间作用
+1）避免名字冲突
+2）划分逻辑单元
+
+2 定义名字空间
+namespace 名字空间名{
+    名字空间成员1;
+    名字空间成员2;
+    ...
+}
+名字空间成员可以是：全局变量、全局函数、类型、名字空间
+eg：
+namespace ns{
+    int i;//全局变量
+    void func(void){...}//全局函数
+    struct student{...};//结构体类型
+    namespace ns2{...}
+}
+
+3 名字空间成员的使用
+1）通过作用域限定运算符"::"
+    名字空间名::要访问的成员;
+eg:
+namespace ns{
+    int i;//全局变量
+}
+int main(void){
+    i=100;//err,名字空间成员不能直接访问
+    ns::i=100;//ok,通过作用域限定运算符访问
+}
+2）名字空间指令
+    using namespace 名字空间名;
+    在该指令以后的代码，指定的名字空间成员都可见，访问其中成员可以省略作用域限定
+3）名字空间成员声明
+    using 名字空间名::名字空间成员;
+    将名字空间中的某个成员引入到当前作用域，在该作用域访问这个成员如访问局部变量一
+    样，可以省略作用域限定。
+
+作用:1、指定作用域(划分逻辑单元) 2、避免名字冲突
+
+4 无名名字空间
+    不属于任何名字空间的标识符，将被编译器划分到无名名字空间中，访问里面的成员:
+    "::成员名"。
+
+5 嵌套名字空间
+    namespace china{
+        namespace beijing{
+            namespace chaoyang{
+                char *name;
+            }
+        }
+    }
+    使用:china::beijing::chaoyang::name = "老王";
+
+
+四 C++结构体、联合体和枚举
+1 C++结构体类型
+1）定义结构体类型变量时，可以省略"struct"关键字
+eg:
+    struct A{...};//声明
+    A a;//定义结构体类型的变量a
+
+2）C++结构体里面可以直接定义函数，称为成员函数，而且在成员函数中可以直接访问成员
+    变量
+eg:
+    struct A{
+        int a;//成员变量
+        void foo(void){...}//成员函数
+    };
+
+2 联合体 //了解
+1）定义联合体类型变量时，可以省略"union"关键字
+2）支持匿名联合
+
+3 枚举
+1）定义枚举类型变量时可以省略"enum"关键字
+2）C++枚举是一种独立的数据类型，而C中枚举就是整型数
+eg:
+    enum COLOR{RED,GREEN,BLUE};
+    /*enum*/COLOR c;
+
+五 C++字符串
+1 C++兼容C中的字符串表示方式
+1）字面值常量字符串"hello"
+2)字符指针 char*
+3)字符数组 char[]
+
+2 C++中增加了string类型，专门表示字符串
+    namespace std{//实现
+        struct string{
+            //...成员函数维护这个字符指针
+            char* str;
+        };
+    }
+1）定义字符串
+    string s;//定义空字符串
+    string s1="hello";//定义同时初始化
+    string s2("hello");
+    string s3=string("hello");
+    注:s1、s2、s3三种写法完全等价
+2）字符串的基本操作
+--》字符串的拷贝: "="
+--》字符串的连接: "+" "+="
+--》字符串的比较: > < == !=
+--》获取字符串中某个字符：[]
+--》获取字符串的长度: size()/length()
+--》将string转换成char*: c_str()
+eg:
+    string s1 = "hello";
+    s1 = " world";//world
+    s1 += " world";//hello world
+    ----------------------------------
+    string s1 = "hello";
+    string s2 = s1 + " world";//hello world
+    ---------------------------------
+    string s1 = "hello";
+    string s2 = "world";
+    if(s1>s2){
+        cout << "s1>s2" << endl;
+    }
+    else{
+        cout << "s1<s2" << endl;
+    }
+    ----------------------------------
+    string s1 = "hello";
+    cout << s1[0] << endl;//h
+    s1[0] = 'H';
+    cout << s1 << endl;//Hello
+    ----------------------------------
+    string s1 = "hello world";
+    cout << s1.size() << endl;//12
+    cout << s1.length() << endl;//12
+    ----------------------------------
+    string s1 = "hello";
+    char* s2 = s1;//err
+    char* s2 = s1.c_str();//ok
+
+=====================================
+练习：
+    使用string表示字符串，从键盘读取一个字符串，统计里面包含字母A/a的个数
+注：cin >> s;//会被空白字符截断
+getline(cin,s);//可以读走空白
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

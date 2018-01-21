@@ -1,0 +1,149 @@
+二十三 运行时的类型信息
+1 typeid运算符
+#include<typeinfo>
+typeid(类型/对象)，返回typeinfo的对象，用于描述类型信息。
+在typeinfo类中包含了name()的成员函数返回字符串形式类型信息。
+
+typeinfo类支持"==""!="的操作符重载，可以直接进行类型之间的比较，
+如果类型之间存在多态的继承关系，还可以利用多态的特性确定实际的
+对象类型。
+eg:
+    cout<<typeid(int).name()<<endl;
+
+2 动态类型转换
+语法:
+    目标类型变量=dynamic_cast<目标类型>(源类型变量)
+    
+场景:用于具有多态特性的父子类指针和引用之间进行显示的转换(向下造型)。
+注：在转换过程中，会检查目标对象和期望的对象类型是否一致，如果-致转换
+成功，不一致装换失败。
+如果是指针，返回NULL表示失败，如果转换的是引用抛出异常"bad_cast"表示
+失败。
+====================================================================
+二十四 异常(Exception)
+1 常见的错误
+1）语法错误
+2）逻辑错误
+3）功能错误
+4）设计缺陷
+5）需求不符
+6）环境异常
+7）操作不当
+
+2 传统c中错误处理机制
+1）通过返回值表示错误
+优点：函数调用路径中所有的栈对象，都能正确的被析构，不会内存泄漏。
+缺点：错误处理流程比较复杂，逐层判断，代码臃肿
+
+2）通过远跳机制处理错误
+优点：不需要逐层判断，一步到位错误处理，代码精炼
+缺点：函数调用产生的栈对象失去了析构的机会，有内存泄漏的风险
+
+3 C++异常处理
+结合两种传统错误处理的优点，同时避免他们的缺点，在形式上实现一步到
+位的错误处理，同时保证所有栈对象能被析构
+
+4 异常语法
+1）异常抛出
+throw 异常对象;
+eg:
+    throw -1;
+    throw "File Error";
+
+    class FileError{};
+    throw FileError(...);
+
+2）异常捕获
+try{
+    可能发生异常的语句;
+}catch(异常类型1){
+    针对异常类型1的处理;
+}catch(异常类型2){
+    针对异常类型2的处理;
+}...
+catch(...){
+    针对其他未知异常的处理;
+}
+注：catch子句根据异常对象类型自上而下顺序匹配，因此
+对类类型的异常捕获要写到基类类型的异常捕获的前面，否则
+子类的异常将被提前截获。
+
+5 函数异常说明
+1）可以在任何函数中增加异常说明，说明该函数所可能抛出的
+异常类型。
+    返回类型 函数名(形参表) throw(异常类型表){}
+2）函数说明是一种承诺，表示该函数所抛出的异常说明以外的
+异常，则无法正常捕获，导致进程终止。
+3）异常说明的极端形式
+--》不写异常说明，表示可以抛出任何异常。
+--》空异常说明，throw()，表示不会抛出任何异常。
+4）如果函数的声明和定义分开要保证声明和定义一致。
+
+补充：函数重写的要求
+如果基类中的虚函数带有异常说明，那么该函数在子类中覆盖版本
+不能说明比基类抛出更多的异常，否则将因为"放松throw限定"而
+编译报错。
+
+6 标准异常类
+class exception{
+public:
+    exception()throw(){}
+    virtual ~exception()throw(){}
+    virtual const char* what() const throw();
+};
+eg:
+    class A:public exception{
+    public:  
+        const char* what()const throw(){
+            return "Error A";
+        }
+    };
+    tyr{
+        throw A();
+    }catch(exception& ex){
+        ex.what();//Error A
+    }
+7 构造函数和析构函数的异常
+1）构造函数抛出异常，该对象将会被不完整构造，这样对象的析构函数
+永远不会被自动执行。因此在构造函数抛出异常之前
+
+2）析构函数最好不要抛出异常
+
+================================================================
+二十五 I/O流
+1 主要的I/O流类
+                         ios
+                     /       \
+            istream            ostream
+           /    |    \       /   |     \
+istrstream ifstream iostream ofstream ostrstream
+                   /       \
+                strstream  fstream
+2 格式化I/O
+1）格式化函数
+eg:
+    cout<<10/3.0<<endl;//3.33333
+    cout.precision(10);
+    cout<<10/3.0<<endl;//3.333333333
+2）流控制符
+eg:
+    cout<<10/3.0<<endl;//3.33333
+    cout<<setprecision(10)<<10/3.0<<endl;//3.333333333
+3 字符串流
+#include<strtstream>//过时
+#istrstream ostrstream strtstream
+
+#include<sstream>//当前用的比较多
+istringstream//读取内存
+ostringstream//写入内存
+stingstream//读写
+
+4 文件流
+#include<fstream>
+ifstream//读取
+ofstream//写入
+fstream//读写
+
+5 二进制I/O  //fread、fwrite
+ostream& ostream::write(const char* buf,size_t num)
+istream& istream::read(char* buf,streamsize num);
